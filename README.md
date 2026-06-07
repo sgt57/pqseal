@@ -1,12 +1,16 @@
 # PQSeal
 
-PQSeal is a lightweight TypeScript library for sealing sensitive fields before they travel over ordinary HTTPS. It adds a one-time, challenge-bound post-quantum encryption layer to reduce harvest-now, decrypt-later exposure when full end-to-end PQC or hybrid TLS is not available.
+PQSeal is a lightweight TypeScript library for sealing sensitive fields before they travel over conventional HTTPS. It adds a one-time, challenge-bound post-quantum encryption layer to reduce harvest-now, decrypt-later exposure when full end-to-end PQC or hybrid TLS is not available.
 
-It is not a TLS replacement. Keep using HTTPS for server authentication, integrity, routing security, cookies, and browser trust.
+- PQSeal is experimental for now.
+- It protects sensitive fields against passive harvest now, decrypt later attacks.
+- It does not replace HTTPS or TLS.
+- It does not protect against active MITM that can replace the PQSeal public key.
+- It does not protect data if the private key is compromised.
 
 ## Install
 
-```sh
+```bash
 pnpm add pqseal
 ```
 
