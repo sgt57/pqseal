@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   PQSealError,
@@ -72,6 +72,30 @@ describe('PQSeal', () => {
       server.open(envelope);
     } catch (error) {
       expectPQSealCode(error, 'CHALLENGE_REPLAYED');
+    }
+  });
+
+  it('cleans expired challenges automatically on the cleanup interval', () => {
+    vi.useFakeTimers();
+    let now = 1_000;
+    const server = createPQSealServer({ challengeTtlMs: 10, cleanupInterval: 5, now: () => now });
+    const client = createPQSealClient();
+
+    try {
+      const envelope = client.seal(server.issueChallenge(), 'late');
+      now = 1_011;
+      vi.advanceTimersByTime(5);
+
+      let error: unknown;
+      try {
+        server.open(envelope);
+      } catch (caught) {
+        error = caught;
+      }
+      expectPQSealCode(error, 'CHALLENGE_REPLAYED');
+    } finally {
+      server.close();
+      vi.useRealTimers();
     }
   });
 

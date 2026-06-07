@@ -54,7 +54,7 @@ const opened = server.openFields(sealed);
 const server = createPQSealServer({
   challengeTtlMs: 60_000,
   keyRotationMs: 30 * 60_000,
-  autoCleanup: true
+  cleanupInterval: 60_000
 });
 ```
 
@@ -63,6 +63,7 @@ Defaults:
 - ML-KEM-768 key rotation: 30 minutes
 - Allowed rotation range: 1 minute to 24 hours
 - Challenge TTL: 60 seconds
+- Expired challenge cleanup interval: same as `challengeTtlMs`
 - Challenge entropy: 128 random bits, base64url encoded
 - KDF: HKDF-SHA512
 - AEAD: AES-256-GCM

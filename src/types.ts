@@ -55,8 +55,7 @@ export interface PQSealServerOptions {
   keyRotationMs?: number;
   challengeGenerator?: ChallengeGenerator;
   now?: () => number;
-  autoCleanup?: boolean;
-  cleanupIntervalMs?: number;
+  cleanupInterval?: number;
 }
 
 export interface PQSealClientOptions {
@@ -68,7 +67,7 @@ export interface PQSealServer {
   open(envelope: PQSealEnvelope, options?: OpenOptions): Bytes;
   openJson<T = unknown>(envelope: PQSealEnvelope, options?: OpenOptions): T;
   openFields<T extends Record<string, unknown>>(sealedObject: FieldSealedObject, options?: OpenOptions): T;
-  cleanup(): number;
+  cleanup(): void;
   close(): void;
 }
 

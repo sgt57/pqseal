@@ -36,6 +36,6 @@ PQSeal derives a unique AES-256-GCM key and 96-bit nonce from each KEM shared se
 
 - Keep `challengeTtlMs` short. The default is 60 seconds.
 - Keep key rotation between 1 minute and 24 hours. The default is 30 minutes.
-- Use `autoCleanup` or call `cleanup()` from idle/server maintenance paths.
+- Tune `cleanupInterval` if expired challenges need to be reclaimed more or less frequently. It defaults to `challengeTtlMs`.
 - Use AAD to bind envelopes to form names, endpoint versions, tenant IDs, or request context where appropriate.
 - In multi-instance deployments, use sticky routing for challenge issuance/opening until a shared challenge store adapter exists.

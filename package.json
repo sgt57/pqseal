@@ -1,6 +1,6 @@
 {
   "name": "pqseal",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Challenge-bound post-quantum field sealing for ordinary HTTPS environments.",
   "type": "module",
   "license": "MIT",

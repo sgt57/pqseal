@@ -1,6 +1,6 @@
 import { createPQSealClient, createPQSealServer } from '../dist/index.js';
 
-const server = createPQSealServer({ autoCleanup: true });
+const server = createPQSealServer();
 const client = createPQSealClient();
 
 const bundle = server.issueChallenge();

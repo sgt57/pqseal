@@ -153,6 +153,7 @@ export function createPQSealServer(options: PQSealServerOptions = {}): PQSealSer
   const kem = options.kem ?? mlKem768;
   const challengeTtlMs = options.challengeTtlMs ?? DEFAULT_CHALLENGE_TTL_MS;
   const keyRotationMs = options.keyRotationMs ?? DEFAULT_KEY_ROTATION_MS;
+  const cleanupInterval = options.cleanupInterval ?? challengeTtlMs;
   const now = options.now ?? Date.now;
   const challengeGenerator = options.challengeGenerator ?? defaultChallengeGenerator;
   const challenges = new Map<string, ChallengeRecord>();
@@ -160,6 +161,7 @@ export function createPQSealServer(options: PQSealServerOptions = {}): PQSealSer
 
   assertPositiveInteger('challengeTtlMs', challengeTtlMs);
   assertKeyRotationMs(keyRotationMs);
+  assertPositiveInteger('cleanupInterval', cleanupInterval);
 
   function rotateIfNeeded(timestamp: number): KeyState {
     if (!currentKey || timestamp >= currentKey.expiresAt) {
@@ -172,37 +174,30 @@ export function createPQSealServer(options: PQSealServerOptions = {}): PQSealSer
     return currentKey;
   }
 
-  function cleanup(): number {
+  function cleanup(): void {
     const timestamp = now();
-    let deleted = 0;
     for (const [challenge, record] of challenges) {
       if (record.expiresAt > timestamp) {
         break;
       }
       challenges.delete(challenge);
-      deleted += 1;
     }
-    return deleted;
   }
 
-  let timer: ReturnType<typeof setInterval> | undefined;
-  if (options.autoCleanup) {
-    const cleanupIntervalMs = options.cleanupIntervalMs ?? challengeTtlMs;
-    assertPositiveInteger('cleanupIntervalMs', cleanupIntervalMs);
-    timer = setInterval(cleanup, cleanupIntervalMs);
-    (timer as { unref?: () => void }).unref?.();
-  }
+  let timer: ReturnType<typeof setInterval> | undefined = setInterval(cleanup, cleanupInterval);
+  (timer as { unref?: () => void }).unref?.();
 
   function issueChallenge(): ChallengeBundle {
     const timestamp = now();
-    cleanup();
     const key = rotateIfNeeded(timestamp);
     const expiresAt = timestamp + challengeTtlMs;
     let challenge = '';
-    for (let attempt = 0; attempt < MAX_CHALLENGE_GENERATION_ATTEMPTS; attempt += 1) {
+    for (let attempt = 0; attempt < MAX_CHALLENGE_GENERATION_ATTEMPTS; ++attempt) {
       challenge = challengeGenerator();
       const existing = challenges.get(challenge);
-      if (!existing || existing.expiresAt <= timestamp) {
+      if (!existing) break;
+      if (existing.expiresAt <= timestamp) {
+        challenges.delete(challenge);
         break;
       }
       challenge = '';

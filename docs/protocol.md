@@ -33,7 +33,7 @@ All binary values are base64url encoded without padding.
 
 Challenges are one-time use. `open()` deletes the challenge before decapsulation and decryption, so replayed envelopes fail even if the first decryption attempt was malformed.
 
-Expired challenges are rejected. The in-memory challenge map is cleaned opportunistically during issue/open calls, and `cleanup()` is available for explicit idle cleanup.
+Expired challenges are rejected. The in-memory challenge map is cleaned automatically on `cleanupInterval`, and `cleanup()` is available for explicit cleanup.
 
 ## Key Rotation
 

@@ -10,8 +10,7 @@ const server = createPQSealServer({
   challengeTtlMs,
   keyRotationMs,
   challengeGenerator,
-  autoCleanup,
-  cleanupIntervalMs
+  cleanupInterval
 });
 ```
 
@@ -24,7 +23,9 @@ Methods:
 - `cleanup(): number`
 - `close(): void`
 
-`close()` clears the optional auto-cleanup timer.
+Expired challenges are cleaned automatically. `cleanupInterval` is in milliseconds and defaults to `challengeTtlMs`.
+
+`close()` clears the cleanup timer.
 
 ## `createPQSealClient(options?)`
 
