@@ -1,0 +1,51 @@
+{
+  "name": "pqseal",
+  "version": "0.1.0",
+  "description": "Challenge-bound post-quantum field sealing for ordinary HTTPS environments.",
+  "type": "module",
+  "license": "MIT",
+  "author": "",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "docs",
+    "examples"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:all": "pnpm typecheck && pnpm test",
+    "typecheck": "tsc -p tsconfig.test.json"
+  },
+  "keywords": [
+    "post-quantum",
+    "ml-kem",
+    "kyber",
+    "aes-gcm",
+    "hkdf",
+    "hndl",
+    "encryption"
+  ],
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  },
+  "dependencies": {
+    "@noble/ciphers": "^2.2.0",
+    "@noble/hashes": "^2.2.0",
+    "@noble/post-quantum": "^0.6.1"
+  }
+}

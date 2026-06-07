@@ -1,0 +1,90 @@
+# PQSeal
+
+PQSeal is a lightweight TypeScript library for sealing sensitive fields before they travel over ordinary HTTPS. It adds a one-time, challenge-bound post-quantum encryption layer to reduce harvest-now, decrypt-later exposure when full end-to-end PQC or hybrid TLS is not available.
+
+It is not a TLS replacement. Keep using HTTPS for server authentication, integrity, routing security, cookies, and browser trust.
+
+## Install
+
+```sh
+pnpm add pqseal
+```
+
+## Quick Start
+
+```ts
+import { createPQSealClient, createPQSealServer } from 'pqseal';
+
+const server = createPQSealServer();
+const client = createPQSealClient();
+
+const bundle = server.issueChallenge();
+const envelope = client.sealJson(bundle, {
+  cardNumber: '4111111111111111',
+  cvv: '123'
+});
+
+const plaintext = server.openJson(envelope);
+```
+
+## Field Sealing
+
+```ts
+const bundle = server.issueChallenge();
+
+const sealed = client.sealFields(
+  bundle,
+  { email: 'a@example.com', password: 'correct horse battery staple', remember: true },
+  ['password']
+);
+
+// Send `sealed` in a normal JSON request body.
+const opened = server.openFields(sealed);
+```
+
+`sealFields()` removes the selected top-level fields from the visible object and stores them inside one `__pqseal` envelope. The visible `__pqsealFields` list is authenticated as AES-GCM AAD by default, so tampering with it breaks decryption.
+
+## Server Options
+
+```ts
+const server = createPQSealServer({
+  challengeTtlMs: 60_000,
+  keyRotationMs: 30 * 60_000,
+  autoCleanup: true
+});
+```
+
+Defaults:
+
+- ML-KEM-768 key rotation: 30 minutes
+- Allowed rotation range: 1 minute to 24 hours
+- Challenge TTL: 60 seconds
+- Challenge entropy: 128 random bits, base64url encoded
+- KDF: HKDF-SHA512
+- AEAD: AES-256-GCM
+
+## Browser Client
+
+The client API is browser-safe ESM. The server should call `issueChallenge()` and return the bundle from an authenticated HTTPS endpoint.
+
+```ts
+import { createPQSealClient } from 'pqseal';
+
+const client = createPQSealClient();
+const bundle = await fetch('/pqseal/challenge').then((res) => res.json());
+
+const body = client.sealFields(bundle, { username, password }, ['password']);
+await fetch('/login', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify(body)
+});
+```
+
+## Documentation
+
+- [Protocol](docs/protocol.md)
+- [API](docs/api.md)
+- [Security](docs/security.md)
+- [Node example](examples/node.mjs)
+- [Browser example](examples/browser.js)
