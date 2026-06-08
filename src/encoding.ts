@@ -20,7 +20,7 @@ export function concatBytes(...parts: Uint8Array[]): Uint8Array {
   return out;
 }
 
-export function base64UrlEncode(bytes: Uint8Array): string {
+function base64UrlEncodeFallback(bytes: Uint8Array): string {
   let binary = '';
   const chunkSize = 0x8000;
   for (let i = 0; i < bytes.length; i += chunkSize) {
@@ -29,7 +29,17 @@ export function base64UrlEncode(bytes: Uint8Array): string {
   return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
 }
 
-export function base64UrlDecode(value: string): Uint8Array {
+export function base64UrlEncode(bytes: Uint8Array): string {
+  if (typeof bytes.toBase64 === 'function') {
+    return bytes.toBase64({
+      alphabet: 'base64url',
+      omitPadding: true,
+    });
+  }
+  return base64UrlEncodeFallback(bytes);
+}
+
+function base64UrlDecodeFallback(value: string): Uint8Array {
   if (!/^[A-Za-z0-9_-]*$/.test(value)) {
     throw new Error('Invalid base64url string');
   }
@@ -40,6 +50,13 @@ export function base64UrlDecode(value: string): Uint8Array {
     out[i] = binary.charCodeAt(i);
   }
   return out;
+}
+
+export function base64UrlDecode(value: string): Uint8Array {
+  if (typeof Uint8Array.fromBase64 === 'function') {
+    return Uint8Array.fromBase64(value, { alphabet: "base64url" });
+  }
+  return base64UrlDecodeFallback(value);
 }
 
 export function toBytes(value: Uint8Array | string): Uint8Array {

@@ -1,10 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { base64UrlDecode, base64UrlEncode, bytesToUtf8 } from '../src/encoding.js';
 import {
   PQSealError,
-  base64UrlDecode,
-  base64UrlEncode,
-  bytesToUtf8,
   createPQSealClient,
   createPQSealServer,
   type KemAdapter
@@ -107,6 +105,16 @@ describe('PQSeal', () => {
 
     expect(server.issueChallenge().challenge).toBe('same');
     expect(server.issueChallenge().challenge).toBe('next');
+  });
+
+  it('issues base64url challenges without padding', () => {
+    const server = createPQSealServer();
+
+    try {
+      expect(server.issueChallenge().challenge).toMatch(/^[A-Za-z0-9_-]+$/);
+    } finally {
+      server.close();
+    }
   });
 
   it('preserves issued challenge decryptability across key rotation', () => {

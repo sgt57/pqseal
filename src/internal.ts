@@ -1,7 +1,6 @@
-import { bytesToUtf8 } from './encoding.js';
 import { PQSealError } from './errors.js';
 import { mlKem768 } from './kem.js';
-import type { Bytes, ChallengeBundle, KemAdapter, PQSealEnvelope } from './types.js';
+import type { ChallengeBundle, KemAdapter, PQSealEnvelope } from './types.js';
 
 export const VERSION = 1;
 
@@ -37,10 +36,6 @@ export function assertBundle(bundle: ChallengeBundle): void {
   ) {
     throw new PQSealError('BAD_BUNDLE', 'Malformed PQSeal challenge bundle');
   }
-}
-
-export function parseJson<T>(bytes: Bytes): T {
-  return JSON.parse(bytesToUtf8(bytes)) as T;
 }
 
 export function normalizeKems(kems?: Iterable<KemAdapter>): Map<string, KemAdapter> {

@@ -28,6 +28,10 @@
     "./server": {
       "types": "./dist/server.d.ts",
       "import": "./dist/server.js"
+    },
+    "./encoding": {
+      "types": "./dist/encoding.d.ts",
+      "import": "./dist/encoding.js"
     }
   },
   "types": "./dist/index.d.ts",
@@ -48,6 +52,7 @@
     "encryption"
   ],
   "devDependencies": {
+    "@types/node": "^25.9.2",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
   },

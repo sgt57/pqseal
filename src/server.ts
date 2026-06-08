@@ -1,10 +1,10 @@
-import { randomBytes } from '@noble/hashes/utils.js';
+import { randomBytes } from 'node:crypto';
 
-import { decryptAesGcm, deriveAesMaterial, makeFieldAad } from './crypto.js';
-import { base64UrlDecode, base64UrlEncode } from './encoding.js';
+import { decryptAesGcm, deriveAesMaterial, makeFieldAad } from './node-crypto.js';
+import { base64UrlDecode, base64UrlEncode, bytesToUtf8 } from './node-encoding.js';
 import { PQSealError } from './errors.js';
 import { mlKem768 } from './kem.js';
-import { assertEnvelope, assertPositiveInteger, parseJson, VERSION } from './internal.js';
+import { assertEnvelope, assertPositiveInteger, VERSION } from './internal.js';
 import type {
   Bytes,
   ChallengeBundle,
@@ -36,7 +36,11 @@ interface ChallengeRecord {
 }
 
 function defaultChallengeGenerator(): string {
-  return base64UrlEncode(randomBytes(16));
+  return randomBytes(16).toString('base64url');
+}
+
+function parseJson<T>(bytes: Bytes): T {
+  return JSON.parse(bytesToUtf8(bytes)) as T;
 }
 
 function assertKeyRotationMs(value: number): void {
