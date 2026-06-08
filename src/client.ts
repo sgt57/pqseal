@@ -46,15 +46,15 @@ export function createPQSealClient(options: PQSealClientOptions = {}): PQSealCli
     },
     sealFields(bundle, object, keys, options) {
       const sealedFields: Record<string, unknown> = {};
-      const visible: Record<string, unknown> = { ...object };
-      for (const key of keys) {
-        const stringKey = String(key);
-        sealedFields[stringKey] = object[key];
-        delete visible[stringKey];
+      const visible: Record<string, unknown> = {};
+      const stringKeys = keys.map(String);
+      for (const [key, value] of Object.entries(object)) {
+        if (stringKeys.includes(key)) sealedFields[key] = value;
+        else visible[key] = value;
       }
       return {
         ...visible,
-        __pqsealFields: keys.map(String),
+        __pqsealFields: stringKeys,
         __pqseal: seal(bundle, jsonToBytes(sealedFields), {
           ...options,
           aad: options?.aad ?? makeFieldAad(keys)
