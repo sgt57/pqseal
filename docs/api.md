@@ -20,7 +20,7 @@ Methods:
 - `open(envelope, options?): Uint8Array`
 - `openJson<T>(envelope, options?): T`
 - `openFields<T>(sealedObject, options?): T`
-- `cleanup(): number`
+- `cleanup(): void`
 - `close(): void`
 
 Expired challenges are cleaned automatically. `cleanupInterval` is in milliseconds and defaults to `challengeTtlMs`.
