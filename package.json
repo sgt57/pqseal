@@ -1,6 +1,6 @@
 {
   "name": "pqseal",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Challenge-bound post-quantum field sealing for ordinary HTTPS environments.",
   "type": "module",
   "license": "MIT",
@@ -40,7 +40,8 @@
     "build": "tsc",
     "test": "vitest run",
     "test:all": "pnpm typecheck && pnpm test",
-    "typecheck": "tsc -p tsconfig.test.json"
+    "typecheck": "tsc -p tsconfig.test.json",
+    "prepack": "pnpm build"
   },
   "keywords": [
     "post-quantum",

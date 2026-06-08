@@ -1,9 +1,11 @@
 # PQSeal
 
+[![NPM Version](https://img.shields.io/npm/v/pqseal)](https://www.npmjs.com/package/pqseal)
+[![GitHub Repo stars](https://img.shields.io/github/stars/sgt57/pqseal)](https://github.com/sgt57/pqseal)
+
 PQSeal is a lightweight TypeScript library for sealing sensitive fields before they travel over conventional HTTPS. It adds a one-time, challenge-bound post-quantum encryption layer to reduce harvest-now, decrypt-later exposure when full end-to-end PQC or hybrid TLS is not available.
 
-- PQSeal is experimental for now.
-- It protects sensitive fields against passive harvest now, decrypt later attacks.
+- PQSeal protects sensitive fields against passive harvest now, decrypt later attacks.
 - It does not replace HTTPS or TLS.
 - It does not protect against active MITM that can replace the PQSeal public key.
 - It does not protect data if the private key is compromised.
